@@ -1,5 +1,5 @@
 <template>
-  <div class="app-header">
+  <div class="app-header" v-if="false">
     <img
       class="logo"
       src="https://demo.grapecity.com.cn/spreadjs/SpreadJSTutorial/spread/source/SPJS.svg"

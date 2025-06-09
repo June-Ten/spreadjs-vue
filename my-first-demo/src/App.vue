@@ -1,7 +1,8 @@
 <template>
   <div class="app">
-    <sample-header></sample-header>
-    <div class="content">
+    <router-view v-if="isDemoRoute"></router-view>
+    <sample-header v-if="!isDemoRoute"></sample-header>
+    <div class="content" v-if="!isDemoRoute">
       <div class="nav">
         <sample-nav></sample-nav>
       </div>
@@ -12,20 +13,15 @@
   </div>
 </template>
 
-<script>
-import Header from "./components/header.vue";
-import Nav from "./components/nav.vue";
+<script setup>
+// 直接导入组件，<script setup> 会自动注册组件
+import { computed } from 'vue';
+import { useRoute } from 'vue-router'
+import SampleHeader from "./components/header.vue";
+import SampleNav from "./components/nav.vue";
 
-export default {
-  name: "app",
-  components: {
-    "sample-header": Header,
-    "sample-nav": Nav,
-  },
-  data() {
-    return {};
-  },
-};
+const route = useRoute();
+const isDemoRoute = computed(() => route.path === '/demo' || route.name === 'demo');
 </script>
 
 <style>

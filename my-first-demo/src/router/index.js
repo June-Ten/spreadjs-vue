@@ -29,6 +29,11 @@ let routes = [
     name: "OutLine",
     component: OutLine,
   },
+  {
+    path: '/demo',
+    name: 'demo',
+    component: () => import('@/components/Demo.vue'),
+  }
 ];
 
 export default createRouter({

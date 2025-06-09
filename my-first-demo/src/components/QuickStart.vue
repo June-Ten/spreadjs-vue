@@ -1,7 +1,7 @@
 <template>
   <div class="componentContainer">
-    <h3>快速入门指南</h3>
-    <div>
+    <h3 v-if="false">快速入门指南</h3>
+    <div v-if="false">
       按照以下步骤快速将 SpreadJS 应用到 Vue 的应用程序中：
       <div>
         <p>1. 添加 SpreadJS 产品引用到 Vue 的应用程序中。</p>
@@ -42,6 +42,11 @@ GC.Spread.Common.CultureManager.culture("zh-cn");
 export default {
   methods: {
     initSpread(value) {
+      // value.setConfig({
+      //   ribbon: {
+      //     visible: false  // 隐藏整个功能区
+      //   }
+      // })
       let spread = value.getWorkbook();
 
       let sheet = spread.getActiveSheet();
@@ -90,8 +95,8 @@ export default {
   position: absolute;
   left: 0px;
   right: 30px;
-  top: 230px;
   bottom: 10px;
+  height: 100%;
 }
 .spreadHost {
   width: 100%;
