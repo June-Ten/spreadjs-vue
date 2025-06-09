@@ -33,6 +33,11 @@ let routes = [
     path: '/demo',
     name: 'demo',
     component: () => import('@/components/Demo.vue'),
+  },
+  {
+    path: '/new-demo',
+    name: 'new-demo',
+    component: () => import('@/components/NewDemo.vue'),
   }
 ];
 

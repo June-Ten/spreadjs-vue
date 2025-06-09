@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>SpreadJS Designer</title>
+  <link href="./gc.spread.sheets.excel2013white.17.0.4.css" rel="stylesheet" type="text/css">
+  <link href="./gc.spread.sheets.designer.17.0.4.min.css" rel="stylesheet" type="text/css">
+  <link href="./custom.css" rel="stylesheet" type="text/css">
+</head>
+<style>
+  .designer {
+    height: calc(100% - 15px);
+  }
+
+  html,
+  body {
+    overflow: hidden;
+    padding: 0;
+    margin: 0;
+    height: 100%;
+  }
+
+  #gc-designer-container {
+    height: 100%;
+  }
+
+  .switch {
+    position: fixed;
+    display: inline-block;
+    width: 50px;
+    height: 20px;
+    top: 5px;
+    right: 40px;
+  }
+
+  .switchm {
+    position: fixed;
+    display: inline-block;
+    width: 100px;
+    height: 20px;
+    top: 5px;
+    right: 100px;
+  }
+
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .innerSlider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: 0.4s;
+    transition: 0.4s;
+    height: 20px;
+  }
+
+  .innerSlider:before {
+    position: absolute;
+    content: '';
+    height: 15px;
+    width: 15px;
+    left: 5px;
+    bottom: 3px;
+    background-color: white;
+    -webkit-transition: 0.4s;
+    transition: 0.4s;
+  }
+
+  input:checked+.innerSlider {
+    background-color: rgb(164, 60, 120);
+  }
+
+  input:focus+.innerSlider {
+    box-shadow: 0 0 1px rgb(164, 60, 120);
+  }
+
+  input:checked+.innerSlider:before {
+    -webkit-transform: translateX(20px);
+    -ms-transform: translateX(20px);
+    transform: translateX(20px);
+  }
+
+  /* Rounded innerSliders */
+  .innerSlider.round {
+    border-radius: 10px;
+  }
+
+  .innerSlider.round:before {
+    border-radius: 50%;
+  }
+
+  .designer {
+    height: calc(100% - 15px);
+  }
+</style>
+
+<body>
+  <button onclick="handleExport()">导出</button>
+  <input type="file" id="fileDemo" class="input" placeholder="导入文件" onchange="handleImportExcel()" />
+  <div id="ss"></div>
+  <div id="gc-designer-container"></div>
+  <script type="text/javascript" src="./gc.spread.sheets.all.17.0.4.min.js"></script>
+  <script type="text/javascript" src="./gc.spread.sheets.shapes.17.0.4.min.js"></script>
+  <script type="text/javascript" src="./gc.spread.sheets.charts.17.0.4.min.js"></script>
+  <script type="text/javascript" src="./gc.spread.sheets.slicers.17.0.4.min.js"></script>
+  <script type="text/javascript" src="./gc.spread.sheets.print.17.0.4.min.js"></script>
+  <script type="text/javascript" src="./gc.spread.sheets.barcode.17.0.4.min.js"></script>
+  <script type="text/javascript" src="./gc.spread.sheets.pdf.17.0.4.min.js"></script>
+  <script type="text/javascript" src="./gc.spread.pivot.pivottables.17.0.4.min.js"></script>
+  <script type="text/javascript" src="./gc.spread.sheets.tablesheet.17.0.4.min.js"></script>
+  <script type="text/javascript" src="./gc.spread.sheets.ganttsheet.17.0.4.min.js"></script>
+  <script type="text/javascript" src="./gc.spread.sheets.formulapanel.17.0.4.min.js"></script>
+  <script type="text/javascript" src="./gc.spread.report.reportsheet.17.0.4.min.js"></script>
+  <script type="text/javascript" src="./gc.spread.sheets.io.17.0.4.min.js"></script>
+  <script type="text/javascript" src="./gc.spread.excelio.17.0.4.min.js"></script>
+  <script type="text/javascript" src="./gc.spread.sheets.designer.resource.cn.17.0.4.min.js"></script>
+  <script type="text/javascript" src="./gc.spread.sheets.designer.all.17.0.4.min.js"></script>
+  <script type="text/javascript">
+    var config = GC.Spread.Sheets.Designer.DefaultConfig;
+    config.commandMap = {
+      Welcome: {
+        title: "Welcome",
+        text: "Welcome",
+        iconClass: "ribbon-button-welcome",
+        bigButton: "true",
+        commandName: "Welcome",
+        execute: function (context, propertyName, fontItalicChecked) {
+          alert('Welcome to new designer.');
+        }
+      }
+    }
+    config.ribbon[0].buttonGroups.unshift({
+      "label": "NewDesigner",
+      "thumbnailClass": "welcome",
+      "commandGroup": {
+        "children": [{
+          "direction": "vertical",
+          "commands": ["Welcome"]
+        }]
+      }
+    });
+    var designer = new GC.Spread.Sheets.Designer.Designer(document.getElementById("gc-designer-container"), config);
+    let spread = designer.getWorkbook()
+
+    let excelIo = new GC.Spread.Excel.IO()
+    //导入
+    function handleImportExcel(e) {
+      let excelFile = document.getElementById('fileDemo').files[0]
+      excelIo.open(
+        excelFile,
+        function (json) {
+          let workbookObj = json
+          spread.fromJSON(workbookObj)
+        },
+        function (e) {
+          alert(e.errorMessage)
+        }
+      )
+    }
+    //导出表格文件
+    function handleExport() {
+      let json = spread.toJSON()
+      excelIo.save(
+        json,
+        function (blob) {
+          down(blob)
+        },
+        function (e) {
+          console.log(e)
+        }
+      )
+    }
+    //下载文件
+    function down(blob) {
+      const url = window.URL.createObjectURL(blob)
+      // 创建隐藏的可下载链接
+      const link = document.createElement('a')
+      link.style.display = 'none'
+      link.href = url
+      link.target = '_blank'
+      link.setAttribute('download', 'excel.xlsx')
+      document.body.appendChild(link)
+      link.click()
+    }
+
+  </script>
+</body>
+
+</html>

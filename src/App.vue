@@ -21,7 +21,8 @@ import SampleHeader from "./components/header.vue";
 import SampleNav from "./components/nav.vue";
 
 const route = useRoute();
-const isDemoRoute = computed(() => route.path === '/demo' || route.name === 'demo');
+const otherRoutes = ['/demo', '/new-demo'];
+const isDemoRoute = computed(() => otherRoutes.includes(route.path));
 </script>
 
 <style>

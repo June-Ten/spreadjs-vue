@@ -13,6 +13,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
+        host: '0.0.0.0',
         target: "https://test.jinzhiyuns.com",
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ""),
