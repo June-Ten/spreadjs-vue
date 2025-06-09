@@ -1,5 +1,8 @@
 <template>
   <div class="spread-container">
+    <div>
+      <button @click="saveData">保存</button>
+    </div>
     <gc-spread-sheets
       :hostStyle="{ width: '100%', height: '100%' }"
       @workbookInitialized="initSpread"
@@ -44,8 +47,10 @@ const colInfos = [
   { name: "cus_phone", displayName: "顾客电话" },
 ]
 
+const spreadInstance = ref(null)
 // 初始化Spread
 const initSpread = (spread) => {
+  spreadInstance.value = spread
   // 禁止用户编辑（可选）
   spread.options.allowUserEdit = false
   
@@ -89,6 +94,14 @@ onMounted(() => {
 async function getData() {
   let res = await request.get('/Restful/JinQue.G1Orders.Entities.Sys_SELL_Sales_Order/GetIntentOrder')
   console.log(res)
+}
+
+function saveData() {
+  if (!spreadInstance.value) return
+  // 获取改动的数据
+  const sheet = spreadInstance.value.getActiveSheet()
+  const dirtyCells = sheet.getDirtyCells()
+  console.log('改动的数据:', dirtyCells)
 }
 
 // 组件卸载时清理

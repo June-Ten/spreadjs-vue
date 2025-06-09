@@ -33,10 +33,11 @@ service.interceptors.response.use(
   (response) => {
     // 对响应数据做处理
     // 假设后端返回格式为 { code: number, data: any, message: string }
+    console.log(response)
     const data = response.data
     
-    if (data.code === 200 || data.code === 0) {
-      return data.data
+    if (data.Code === 200 || data.code === 0) {
+      return data
     } else {
       // 处理业务错误
       return Promise.reject(new Error(data.message || 'Error'))
