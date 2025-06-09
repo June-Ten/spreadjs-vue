@@ -10,13 +10,14 @@
 </template>
 
 <script setup>
-import { ref, onBeforeUnmount } from 'vue'
+import { ref, onBeforeUnmount, onMounted } from 'vue'
 import "@grapecity-software/spread-sheets-designer/styles/gc.spread.sheets.designer.min.css";
 import "@grapecity-software/spread-sheets/styles/gc.spread.sheets.excel2013white.css";
 import '@grapecity/spread-sheets-vue'
 import * as GC from '@grapecity/spread-sheets'
 import "@grapecity-software/spread-sheets-resources-zh";
 import dataService from '../static/dataService' // 确保路径正确
+import request from '@/request/index.js'
 
 // 设置中文
 GC.Spread.Common.CultureManager.culture('zh-cn')
@@ -79,6 +80,15 @@ const initSpread = (spread) => {
   
   // 自动调整列宽（可选）
   sheet.autoFitColumn(0, sheet.getColumnCount())
+}
+
+onMounted(() => {
+  getData()
+})
+
+async function getData() {
+  let res = await request.get('/Restful/JinQue.G1Orders.Entities.Sys_SELL_Sales_Order/GetIntentOrder')
+  console.log(res)
 }
 
 // 组件卸载时清理
