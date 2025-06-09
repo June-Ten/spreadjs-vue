@@ -19,7 +19,7 @@ import "@grapecity-software/spread-sheets/styles/gc.spread.sheets.excel2013white
 import '@grapecity/spread-sheets-vue'
 import * as GC from '@grapecity/spread-sheets'
 import "@grapecity-software/spread-sheets-resources-zh";
-import dataService from '../static/dataService' // 确保路径正确
+import dataService from '../static/dataService'
 import request from '@/request/index.js'
 
 // 设置中文
