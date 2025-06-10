@@ -5,6 +5,7 @@
       <button id="btnSaveData">保存数据</button>
       <button id="btnAddRow">添加行</button>
       <button id="btnGroupRows">分组行</button>
+      <button @click="getRowData">获取行数据</button>
     </div>
     <div
       id="excel-container"
@@ -82,6 +83,32 @@ const initSpread = (spreadInstance) => {
   // sheet.setValue(0, 1, '产品名称');
   // sheet.setValue(0, 2, '价格');
   // sheet.setValue(0, 3, '库存');
+
+  // 设置二级表头（两行）
+  sheet.setRowCount(2); // 前两行为表头
+
+  // 一级表头文字
+  sheet.setValue(0, 0, "订单信息");
+  sheet.setValue(0, 3, "产品信息");
+  sheet.setValue(0, 5, "价格信息");
+  sheet.setValue(0, 9, "销售信息");
+  sheet.setValue(0, 15, "顾客信息");
+
+  // 合并一级表头（注意起始列和列数）
+  // sheet.addSpan(0, 0, 1, 3);  // 订单信息（0~2列）
+  // sheet.addSpan(0, 3, 1, 2);  // 产品信息（3~4列）
+  // sheet.addSpan(0, 5, 1, 4);  // 价格信息（5~8列）
+  // sheet.addSpan(0, 9, 1, 6);  // 销售信息（9~14列）
+  // sheet.addSpan(0, 15, 1, 3); // 顾客信息（15~17列）
+
+  // 二级表头用 bindColumns 自动生成（从第2行开始）
+  sheet.setRowCount(2, GC.Spread.Sheets.SheetArea.colHeader);
+  sheet.addSpan(0, 0, 1, 3, GC.Spread.Sheets.SheetArea.colHeader);
+  sheet.setValue(0, 0, "Company", GC.Spread.Sheets.SheetArea.colHeader);
+
+  // 分组
+  sheet.columnOutlines.group(0, 2);
+
   sheet.autoGenerateColumns = false
   sheet.bindColumns(colInfos)
   sheet.setDataSource(dataService.getDataByNumber(100))
@@ -101,6 +128,25 @@ const initSpread = (spreadInstance) => {
   defaultStyle.hAlign = GC.Spread.Sheets.HorizontalAlign.center;
   sheet.setDefaultStyle(defaultStyle);
 
+  // 设置日期时间选择器
+  const style = new GC.Spread.Sheets.Style();
+  style.cellButtons = [
+    {
+      imageType: GC.Spread.Sheets.ButtonImageType.dropdown,
+      command: "openDateTimePicker",
+      useButtonStyle: true,
+    }
+  ];
+  style.dropDowns = [
+    {
+      type: GC.Spread.Sheets.DropDownType.dateTimePicker,
+      option: {
+        showTime: false,
+      }
+    }
+  ];
+  sheet.setStyle(-1, 1, style);
+
   // let style = new GC.Spread.Sheets.Style()
   // style.backColor = "pink"
   // // 添加行状态规则（整行格式设置）
@@ -108,27 +154,27 @@ const initSpread = (spreadInstance) => {
   // sheet.repaint();
 
   // 构造公式，比如第5列是quantity列，表达式为：=$E1<30 （注意列索引转为字母）
-//   const quantityColIndex = 4
-//   const rowCount = sheet.getRowCount();
-// const colCount = sheet.getColumnCount();
-// const formula = `=$${String.fromCharCode(65 + quantityColIndex)}1<30`;
+  //   const quantityColIndex = 4
+  //   const rowCount = sheet.getRowCount();
+  // const colCount = sheet.getColumnCount();
+  // const formula = `=$${String.fromCharCode(65 + quantityColIndex)}1<30`;
 
-// const style = new GC.Spread.Sheets.Style();
-// style.backColor = "red";
-// style.foreColor = "white";
+  // const style = new GC.Spread.Sheets.Style();
+  // style.backColor = "red";
+  // style.foreColor = "white";
 
-// sheet.conditionalFormats.addRule({
-//   ruleType: GC.Spread.Sheets.ConditionalFormatting.RuleType.expression,
-//   formula: formula,
-//   style: style,
-//   range: [new GC.Spread.Sheets.Range(-1, -1, -1, -1)]
-// });
-// sheet.setStyle(5, -1, style, GC.Spread.Sheets.SheetArea.viewport);
-// sheet.getConditionalFormats().addCellValueRule(GcSpread.Sheets.ComparisonOperator.Between, 0, 60, style, [new GcSpread.Sheets.Range(-1,0,-1,1)]);
+  // sheet.conditionalFormats.addRule({
+  //   ruleType: GC.Spread.Sheets.ConditionalFormatting.RuleType.expression,
+  //   formula: formula,
+  //   style: style,
+  //   range: [new GC.Spread.Sheets.Range(-1, -1, -1, -1)]
+  // });
+  // sheet.setStyle(5, -1, style, GC.Spread.Sheets.SheetArea.viewport);
+  // sheet.getConditionalFormats().addCellValueRule(GcSpread.Sheets.ComparisonOperator.Between, 0, 60, style, [new GcSpread.Sheets.Range(-1,0,-1,1)]);
 
-// 设置单元格所在行背景色
-setRowBgColor()
-bindWatch()
+  // 设置单元格所在行背景色
+  setRowBgColor()
+  bindWatch()
 
 };
 
@@ -171,6 +217,14 @@ function bindWatch() {
     }
   })
   sheet.resumePaint();
+}
+
+function getRowData() {
+  // 获取第二行的数据
+  const sheet = sheetInstance.value;
+  const dataSource = sheet.getDataSource();  // 获取绑定的数据源
+  const secondRow = dataSource[1];           // 第二行（索引从0开始）
+  console.log('第二行的数据:', secondRow);
 }
 
 </script>
