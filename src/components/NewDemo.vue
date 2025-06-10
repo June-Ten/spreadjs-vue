@@ -128,6 +128,7 @@ const initSpread = (spreadInstance) => {
 
 // 设置单元格所在行背景色
 setRowBgColor()
+bindWatch()
 
 };
 
@@ -141,10 +142,34 @@ function setRowBgColor() {
   style.foreColor = "white";
   for (let row = 0; row < rowCount; row++) {
     const quantityValue = sheet.getValue(row, colCount); // 假设quantity列在第5列（索引为4）
-    if (quantityValue < 30) {
+    if (quantityValue < 30 && row === 2) {
       sheet.setStyle(row, -1, style, GC.Spread.Sheets.SheetArea.viewport);
     }
   }
+  sheet.resumePaint();
+}
+
+function bindWatch() {
+  // 监听数据变化，如果quantity < 30，则设置整行背景色为红色
+  const sheet = sheetInstance.value;
+  sheet.suspendPaint();
+  sheet.bind(GC.Spread.Sheets.Events.ValueChanged, (e, args) => {
+    console.log('数据变化了', args, e)
+    const row = args.row;
+    const col = args.col;
+    const quantityColIndex = 4; // 假设quantity列在第5列（索引为4）
+    if (col === quantityColIndex) {
+      const quantityValue = sheet.getValue(row, col);
+      const style = new GC.Spread.Sheets.Style();
+      style.backColor = "pink";
+      style.foreColor = "white";
+      if (quantityValue < 30) {
+        sheet.setStyle(row, -1, style, GC.Spread.Sheets.SheetArea.viewport);
+      } else {
+        sheet.setStyle(row, -1, null, GC.Spread.Sheets.SheetArea.viewport); // 恢复默认样式
+      }
+    }
+  })
   sheet.resumePaint();
 }
 
