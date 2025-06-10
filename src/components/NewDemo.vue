@@ -18,6 +18,9 @@
 import { ref, onMounted } from 'vue'
 import dataService from '../static/dataService'
 
+// 设置中文
+GC.Spread.Common.CultureManager.culture("zh-cn");
+
 onMounted(() => {
   initExcel()
 })
@@ -26,15 +29,14 @@ const spreadInstance = ref(null)
 const sheetInstance = ref(null)
 
 function initExcel() {
-  const config = GC.Spread.Sheets.Designer.DefaultConfig
-  config.ribbon = []
+  // const config = GC.Spread.Sheets.Designer.DefaultConfig
+  // config.ribbon = []
   // 初始化SpreadJS
   // const spread = new GC.Spread.Sheets.Workbook(document.getElementById('excel-container'));
   // 设计器模式
   const spreadDesigner = new GC.Spread.Sheets.Designer.Designer(document.getElementById('excel-container'));
+  console.log('spreadDesigner', spreadDesigner)
   spreadInstance.value = spreadDesigner;
-  // 设置中文
-  GC.Spread.Common.CultureManager.culture('zh-cn');
   const spread = spreadDesigner.getWorkbook();
   // 获取活动工作表
   const sheet = spread.getActiveSheet();
