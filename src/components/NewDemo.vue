@@ -1,8 +1,15 @@
 <template>
-  <div
-    class="container"
-    id="excel-container"
-  >
+  <div class="container">
+    <div id="toolbar">
+      <button id="btnLoadData">加载数据</button>
+      <button id="btnSaveData">保存数据</button>
+      <button id="btnAddRow">添加行</button>
+      <button id="btnGroupRows">分组行</button>
+    </div>
+    <div
+      id="excel-container"
+      style="height: calc(100% - 100px);"
+    ></div>
   </div>
 </template>
 
@@ -14,25 +21,27 @@ onMounted(() => {
   initExcel()
 })
 
-const excelInstance = ref(null)
+const spreadInstance = ref(null)
+const sheetInstance = ref(null)
+
 function initExcel() {
   const config = GC.Spread.Sheets.Designer.DefaultConfig
-  console.log('config', config)
   config.ribbon = []
   // 初始化SpreadJS
-    // const spread = new GC.Spread.Sheets.Workbook(document.getElementById('excel-container'));
-    // 设计器模式
-    const spreadDesigner = new GC.Spread.Sheets.Designer.Designer(document.getElementById('excel-container'));
-    // 设置中文
-    GC.Spread.Common.CultureManager.culture('zh-cn');
-    const spread = spreadDesigner.getWorkbook();
-    // 获取活动工作表
-    const sheet = spread.getActiveSheet();
-    // 初始化表格
-    initSpread(sheet);
+  // const spread = new GC.Spread.Sheets.Workbook(document.getElementById('excel-container'));
+  // 设计器模式
+  const spreadDesigner = new GC.Spread.Sheets.Designer.Designer(document.getElementById('excel-container'));
+  spreadInstance.value = spreadDesigner;
+  // 设置中文
+  GC.Spread.Common.CultureManager.culture('zh-cn');
+  const spread = spreadDesigner.getWorkbook();
+  // 获取活动工作表
+  const sheet = spread.getActiveSheet();
+  sheetInstance.value = sheet;
+  // 初始化表格
+  initSpread(sheet);
 }
 
-const spread = ref(null);
 const data = ref([
   { product: '产品A', price: 120, stock: 45 },
   { product: '产品B', price: 210, stock: 32 },
@@ -62,37 +71,82 @@ const colInfos = [
 
 const initSpread = (spreadInstance) => {
   const sheet = spreadInstance;
-    // 设置列宽
-    sheet.setColumnWidth(0, 100);
-    sheet.setColumnWidth(1, 200);
-    sheet.setColumnWidth(2, 100);
-    sheet.setColumnWidth(3, 100);
-    
-    // 设置列标题
-    // sheet.setValue(0, 0, 'ID');
-    // sheet.setValue(0, 1, '产品名称');
-    // sheet.setValue(0, 2, '价格');
-    // sheet.setValue(0, 3, '库存');
-    sheet.autoGenerateColumns = false
-    sheet.bindColumns(colInfos)
-    sheet.setDataSource(dataService.getDataByNumber(100))
+  // 设置列宽
+  // sheet.setColumnWidth(0, 100);
+  // sheet.setColumnWidth(1, 200);
+  // sheet.setColumnWidth(2, 100);
+  // sheet.setColumnWidth(3, 100);
 
-    
-    // 设置标题样式
-    const headerStyle = new GC.Spread.Sheets.Style();
-    headerStyle.backColor = '#4472C4';
-    headerStyle.foreColor = 'white';
-    headerStyle.font = 'bold 14px Arial';
-    headerStyle.hAlign = GC.Spread.Sheets.HorizontalAlign.center;
-    sheet.setStyle(0, -1, headerStyle); // -1表示所有列
-    
-    // 设置默认单元格样式
-    const defaultStyle = new GC.Spread.Sheets.Style();
-    defaultStyle.font = '12px Arial';
-    defaultStyle.hAlign = GC.Spread.Sheets.HorizontalAlign.center;
-    sheet.setDefaultStyle(defaultStyle);
+  // 设置列标题
+  // sheet.setValue(0, 0, 'ID');
+  // sheet.setValue(0, 1, '产品名称');
+  // sheet.setValue(0, 2, '价格');
+  // sheet.setValue(0, 3, '库存');
+  sheet.autoGenerateColumns = false
+  sheet.bindColumns(colInfos)
+  sheet.setDataSource(dataService.getDataByNumber(100))
+
+
+  // 设置标题样式
+  // const headerStyle = new GC.Spread.Sheets.Style();
+  // headerStyle.backColor = '#4472C4';
+  // headerStyle.foreColor = 'white';
+  // headerStyle.font = 'bold 14px Arial';
+  // headerStyle.hAlign = GC.Spread.Sheets.HorizontalAlign.center;
+  // sheet.setStyle(0, -1, headerStyle); // -1表示所有列
+
+  // 设置默认单元格样式
+  const defaultStyle = new GC.Spread.Sheets.Style();
+  defaultStyle.font = '12px Arial';
+  defaultStyle.hAlign = GC.Spread.Sheets.HorizontalAlign.center;
+  sheet.setDefaultStyle(defaultStyle);
+
+  // let style = new GC.Spread.Sheets.Style()
+  // style.backColor = "pink"
+  // // 添加行状态规则（整行格式设置）
+  // sheet.conditionalFormats.addRowStateRule(GC.Spread.Sheets.RowColumnStates.dirty, style, [new GC.Spread.Sheets.Range(-1, -1, -1, -1)]);
+  // sheet.repaint();
+
+  // 构造公式，比如第5列是quantity列，表达式为：=$E1<30 （注意列索引转为字母）
+//   const quantityColIndex = 4
+//   const rowCount = sheet.getRowCount();
+// const colCount = sheet.getColumnCount();
+// const formula = `=$${String.fromCharCode(65 + quantityColIndex)}1<30`;
+
+// const style = new GC.Spread.Sheets.Style();
+// style.backColor = "red";
+// style.foreColor = "white";
+
+// sheet.conditionalFormats.addRule({
+//   ruleType: GC.Spread.Sheets.ConditionalFormatting.RuleType.expression,
+//   formula: formula,
+//   style: style,
+//   range: [new GC.Spread.Sheets.Range(-1, -1, -1, -1)]
+// });
+// sheet.setStyle(5, -1, style, GC.Spread.Sheets.SheetArea.viewport);
+// sheet.getConditionalFormats().addCellValueRule(GcSpread.Sheets.ComparisonOperator.Between, 0, 60, style, [new GcSpread.Sheets.Range(-1,0,-1,1)]);
+
+// 设置单元格所在行背景色
+setRowBgColor()
+
 };
 
+function setRowBgColor() {
+  const sheet = sheetInstance.value;
+  sheet.suspendPaint();
+  const rowCount = sheet.getRowCount();
+  const colCount = sheet.getColumnCount();
+  const style = new GC.Spread.Sheets.Style();
+  style.backColor = "pink";
+  style.foreColor = "white";
+  for (let row = 0; row < rowCount; row++) {
+    const quantityValue = sheet.getValue(row, colCount); // 假设quantity列在第5列（索引为4）
+    if (quantityValue < 30) {
+      sheet.setStyle(row, -1, style, GC.Spread.Sheets.SheetArea.viewport);
+    }
+  }
+  sheet.resumePaint();
+}
 
 </script>
 
