@@ -24,6 +24,10 @@ import request from '@/request/index.js'
 
 // 设置中文
 GC.Spread.Common.CultureManager.culture('zh-cn')
+// 许可证
+GC.Spread.Sheets.LicenseKey = 'E789772571764418#B1upzS7I6V5kVc0ljMqN4L5hFNvM5a6lTQhJ5KiVWOJtie4ZzbZF7SJ3GUmhFTMpkMqxkS7JXUrgzZvkjaShGT6EVVMpGeltURahkeRhkVOJDe7I7d6JXN0F7YLZVWjpGTVF4KyQVeNRkN8QTRzZDU7M7ZVVzKnJVVil5bwsEe8oXQtpXVzlXS4M5dGZ6UqVFezBDT7RURBdFdXhWWz3yLmdHW8cFTBVkenR4SudEd5ITMmZUdMdHVmRXOWdzb0ZFbUdUQEJ4QykHd9VGOrF5UrFnTytSeRlFUzNGSIpHTQtCaiNDZ8I6Sjp5T7gGVKx6UIV7a8F4dXlUc5Yjex8kS7FkMWN4YRNTU736SxFTeVNkI0IyUiwiI9kjNwMTMBRjI0ICSiwCOxIzMwMzN9QTM0IicfJye#4Xfd5nIIlkSCJiOiMkIsICOx8idgMlSgQWYlJHcTJiOi8kI1tlOiQmcQJCLikjM7UzMwAiMxYDM5IDMyIiOiQncDJCLiAzM6ATNyAjMiojIwhXRiwiIx8CMuAjL7ITMiojIz5GRiwiI8+Y9sWY9QmZ0Jyp96uL9v6L0v6L07WY0sqL9X6Y9iojIh94QiwSZ5JHd0ICb6VkIsICOxQDN6cTM7UjM7cTO8cjI0ICZJJCL35lI4JXYoNUY4FGRiwiI4VWZoNFdy3GclJlIbpjInxmZiwSZzxWYmpjIyNHZisnOiwmbBJye0ICRiwiI34zdjF7KBdkdalGUNZmTYdEMstSUKtyVO3yR9FmMHhzNUdzKpNXTndjZNFUTpFkQ5EGeSdjeWdXUz4WdyMHWuNjSBZ7NvBJQ'
+console.log('GC', GC)
+// GC.Spread.Sheets.Designer.LicenseKey = 'Designer-E167413563155422#B1QTg9EZzh4a6BnUshGV9VTaMNXTxYzbHhFWrZ4aXFURzp7T9olQEFkc58UcIhWcjFVS8YFO5lmMzljcydUTRBDWkd6dxFmYwQ5SiR4K5JHSJVGbl5GZBZ5RvcHezB7T4lnczNmUHt4bHZUOURlbqlEcuVDdFVHVpF5SitGSXJmVx5GcrZjQwI7LWZTdpBVOrcGdKRDSShTZkpXYrdWZpJVaa3SbKlXe8gHbk5kdqFUdQpHZC3GTPJHVklEVplHVXJjQw2WbyEEeHJVWVhnZRlWU594cExGejVUerJVYyxkSwdVcw34dyJTdyIkQHlHUOhFb8g4YYtCSSNTQTV7Z9I5Mxw4Ly9mTiojITJCLikzNyADMwQDNiojIIJCL7UTM5EjM4ETO0IicfJye35XX3JCSJpkQiojIDJCLigTMuYHITpEIkFWZyB7UiojIOJyebpjIkJHUiwiIwMzN5MDMgITM6ATNyAjMiojI4J7QiwiIwMjNwUjMwIjI0ICc8VkIsICMuAjLw8CMvIXZudWazVGZiojIz5GRiwiI8+Y9sWY9QmZ0Jyp96uL9v6L0v6L07WY0sqL9X6Y9iojIh94QiwSZ5JHd0ICb6VkIsIiMyQTN5EzM6UzMxQzN6EjI0ICZJJCL355W0IyZsZmIsUWdyRnOiI7ckJye0ICbuFkI1pjIEJCLi4TPBhzb5lGRxoFSUtWam5URoV7K9V5QnFTVpVWV4ZkYZN7ZrpWZxFDdaN5S4hWNwgjTMRGaWZlW8tUdyIjZXV5SDJXRTFjZitmdotEdhpla5x'
 
 // 列配置
 const colInfos = [
@@ -59,6 +63,24 @@ const initSpread = (spread) => {
   
   // 设置不自动生成列
   sheet.autoGenerateColumns = false
+
+    // 设置二级表头（两行）
+  sheet.setRowCount(2); // 前两行为表头
+
+  // 一级表头文字
+  sheet.setValue(0, 0, "订单信息");
+  sheet.setValue(0, 3, "产品信息");
+  sheet.setValue(0, 5, "价格信息");
+  sheet.setValue(0, 9, "销售信息");
+  sheet.setValue(0, 15, "顾客信息");
+
+    // 二级表头用 bindColumns 自动生成（从第2行开始）
+  sheet.setRowCount(2, GC.Spread.Sheets.SheetArea.colHeader);
+  sheet.addSpan(0, 0, 1, 3, GC.Spread.Sheets.SheetArea.colHeader);
+  sheet.setValue(0, 0, "Company", GC.Spread.Sheets.SheetArea.colHeader);
+
+  // 分组
+  sheet.columnOutlines.group(0, 2);
   
   // 绑定列配置
   sheet.bindColumns(colInfos)
@@ -81,14 +103,33 @@ const initSpread = (spread) => {
   sheet.setStyle(0, -1, headerStyle) // -1表示所有列
   
   // 冻结首行（标题行）
-  sheet.frozenRowCount(1)
+  // sheet.frozenRowCount(1)
   
   // 自动调整列宽（可选）
   sheet.autoFitColumn(0, sheet.getColumnCount())
+
+  // 设置日期时间选择器
+  const style = new GC.Spread.Sheets.Style();
+  style.cellButtons = [
+    {
+      imageType: GC.Spread.Sheets.ButtonImageType.dropdown,
+      command: "openDateTimePicker",
+      useButtonStyle: true,
+    }
+  ];
+  style.dropDowns = [
+    {
+      type: GC.Spread.Sheets.DropDownType.dateTimePicker,
+      option: {
+        showTime: false,
+      }
+    }
+  ];
+  sheet.setStyle(-1, 1, style);
 }
 
 onMounted(() => {
-  getData()
+  // getData()
 })
 
 async function getData() {

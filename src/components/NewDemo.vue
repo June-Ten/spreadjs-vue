@@ -29,8 +29,8 @@ const spreadInstance = ref(null)
 const sheetInstance = ref(null)
 
 function initExcel() {
-  // const config = GC.Spread.Sheets.Designer.DefaultConfig
-  // config.ribbon = []
+  const config = GC.Spread.Sheets.Designer.DefaultConfig
+  config.ribbon = []
   // 初始化SpreadJS
   // const spread = new GC.Spread.Sheets.Workbook(document.getElementById('excel-container'));
   // 设计器模式
